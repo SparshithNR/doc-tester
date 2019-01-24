@@ -1,0 +1,22 @@
+{
+  "name": "markdown-test",
+  "version": "0.0.1",
+  "description": "Tests markdown file to keep sample code always work",
+  "main": "index.js",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "test-doc": "node index.js"
+  },
+  "dependencies": {
+    "execa": "^1.0.0",
+    "fixturify": "^0.3.4",
+    "qunit": "^2.9.1",
+    "remark-parse": "^6.0.3",
+    "rimraf": "^2.6.3",
+    "unified": "^7.1.0",
+    "unified-stream": "^1.0.4",
+    "chai": "^3.4.0",
+    "mocha": "^2.3.3"
+  }
+}
