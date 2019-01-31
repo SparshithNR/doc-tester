@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+const program = require('commander');
+const pkg = require('../package.json');
+const markDownTest = require('../index');
+program
+  .version(pkg.version)
+  .option('-f, --file [pathToFile]','File needs to be tested', 'README.md')
+  .option('-d, --debug [true | false]','Retain test file after execution', 'false')
+  .action(async (command) => {
+    let { file, debug } = command;
+    try {
+      await markDownTest(file, debug == 'true' ? true : false);
+    } catch (err) {
+      console.log(`Not all tests passed: \n${err}`);
+      process.exit(1);
+    }
+  });
+program.parse(process.argv);

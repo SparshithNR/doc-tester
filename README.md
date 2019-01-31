@@ -2,9 +2,10 @@
 Markdown file tester
 # this is a sample file to test feature.
 ## POC file
-<!-- @result | a == 9 | -->
-<!-- @imports | { add } | ./add.js | -->
 
 ```
-let a  = add(4, 5);
+import { add } from './add';
+add(4, 5) // equals: 9;
+add(4, 5) // not-equals: 6;
+add(2, 3) // throws;
 ```
