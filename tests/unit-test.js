@@ -1,29 +1,23 @@
 const describe = QUnit.module;
 const it = QUnit.test;
 const done = QUnit.testDone;
-const { parseFile, parseImport, getAssertionComponenets, getCode, getAssertion, checkDupAndAddToList } = require('../lib/util');
+const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList } = require('../lib/util');
 const fixture = require('fixturify');
 const rm = require('rimraf').sync;
 
 describe('Util:', () => {
   describe('parseImport', () => {
     it('simple import', assert => {
-      let importArray = [];
-      let result = parseImport(`import a from './my-module';`, importArray);
-      assert.equal(result, false);
+      let importArray = parseImport(`import a from './my-module';`);
       assert.deepEqual(importArray, [`import a from './my-module';`]);
     });
     it('deep destructured import', assert => {
-      let importArray = [];
-      let result = parseImport(`import foo, { bar: { a } } from 'my-module';`, importArray);
-      assert.equal(result, false);
+      let importArray = parseImport(`import foo, { bar: { a } } from 'my-module';`);
       assert.deepEqual(importArray, [`import foo, { bar: { a } } from 'my-module';`]);
     });
     it('skips import used as a non keyword', assert => {
-      let importArray = [];
-      let result = parseImport(`//lets import some libraries`, importArray);
+      let result = parseImport(`//lets import some libraries`);
       assert.equal(result, `//lets import some libraries`);
-      assert.deepEqual(importArray, []);
     });
   });
   describe('getAssertion', () => {
@@ -44,25 +38,25 @@ describe('Util:', () => {
       assert.equal(assertionCode, `\n`);
     });
   });
-  describe('getAssertionComponenets', () => {
+  describe('getAssertionComponents', () => {
     it('simple parsing', assert => {
-      let assertionObject = getAssertionComponenets(`foo(a) // equals: a;`);
+      let assertionObject = getAssertionComponents(`foo(a) // equals: a;`);
       assert.deepEqual(assertionObject, { code: 'foo(a)', assertion: 'equals', expected: 'a'});
     });
     it('additional comments', assert => {
-      let assertionObject = getAssertionComponenets(`foo(a) // equals: a;sample comment`);
+      let assertionObject = getAssertionComponents(`foo(a) // equals: a;sample comment`);
       assert.deepEqual(assertionObject, { code: 'foo(a)', assertion: 'equals', expected: 'a'});
     });
     it('throw assertion', assert => {
-      let assertionObject = getAssertionComponenets(`foo(a) // throws;`);
+      let assertionObject = getAssertionComponents(`foo(a) // throws;`);
       assert.deepEqual(assertionObject, { code: 'foo(a)', assertion: 'throws', expected: undefined });
     });
     it('not-equals assertion', assert => {
-      let assertionObject = getAssertionComponenets(`foo(a) // not-equals: 2;`);
+      let assertionObject = getAssertionComponents(`foo(a) // not-equals: 2;`);
       assert.deepEqual(assertionObject, { code: 'foo(a)', assertion: 'not-equals', expected: '2' });
     });
     it(`doesn't match random comments`, assert => {
-      let assertionObject = getAssertionComponenets(`foo(a) // test comment;`);
+      let assertionObject = getAssertionComponents(`foo(a) // test comment;`);
       assert.equal(assertionObject, null);
     });
   });
