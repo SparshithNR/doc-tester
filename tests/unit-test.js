@@ -1,7 +1,7 @@
 const describe = QUnit.module;
 const it = QUnit.test;
 const done = QUnit.testDone;
-const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList, parseCode } = require('../lib/util');
+const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList, parseCode, checkIfJS } = require('../lib/util');
 const fixture = require('fixturify');
 const rm = require('rimraf').sync;
 
@@ -31,7 +31,7 @@ describe('Util:', () => {
     });
     it('throws', assert => {
       let assertionCode = getAssertion({ code: 'foo(a)', assertion: 'throws'});
-      assert.equal(assertionCode, `assert.throws(() => { foo(a) }, 'Throws error');\n`);
+      assert.equal(assertionCode, `assert.throws(() => { throw foo(a) }, 'Throws error');\n`);
     });
     it('non listed', assert => {
       let assertionCode = getAssertion({ code: 'foo(a)', assertion: 'expect'});
@@ -63,9 +63,9 @@ describe('Util:', () => {
   describe('parseFile', () => {
     fixture.writeSync('fixture', {
       'README.md':
-      `\`\`\`\nimport foo from './foo';\nfoo(a); // equals: 1;\n\`\`\``,
+      `\`\`\`js\nimport foo from './foo';\nfoo(a); // equals: 1;\n\`\`\``,
       'README_2.md':
-      `\`\`\`\nimport foo from './foo';\nfoo(a); // equals: 1;\n\`\`\`\n \`\`\`\nimport foo from './foo';\nfoo(a); // not-equals: 1;\n\`\`\``,
+      `\`\`\`js\nimport foo from './foo';\nfoo(a); // equals: 1;\n\`\`\`\n \`\`\`js\nimport foo from './foo';\nfoo(a); // not-equals: 1;\n\`\`\``,
       'sample.js':`import foo from './foo';
       foo(a); // equals: 1;`,
       'empty.md': ``
@@ -140,5 +140,25 @@ describe('Util:', () => {
       assert.deepEqual(tempCodeLines, []);
     });
   });
-
+  describe('checkIfJS', () => {
+    it('js', assert => {
+      assert.ok(checkIfJS('js'), 'smallcase');
+      assert.ok(checkIfJS('JS'), 'uppercase');
+    });
+    it('javascript', assert => {
+      assert.ok(checkIfJS('javascript'), 'smallcase');
+      assert.ok(checkIfJS('JAVASCRIPT'), 'uppercase');
+    });
+    it('camelcase', assert => {
+      assert.ok(checkIfJS('javaScript'), 'capital s');
+      assert.ok(checkIfJS('Javascript'), 'capital J');
+      assert.ok(checkIfJS('JavaScript'), 'capital J and S');
+    });
+    it('No Match', assert => {
+      assert.notOk(checkIfJS('java'), 'java');
+      assert.notOk(checkIfJS('sh'), 'sh');
+      assert.notOk(checkIfJS('JAVA'), 'JAVA');
+      assert.notOk(checkIfJS('python'), 'python');
+    });
+  });
 });
