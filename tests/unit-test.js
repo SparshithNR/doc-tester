@@ -1,19 +1,19 @@
 const describe = QUnit.module;
 const it = QUnit.test;
 const done = QUnit.testDone;
-const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList } = require('../lib/util');
+const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList, parseCode } = require('../lib/util');
 const fixture = require('fixturify');
 const rm = require('rimraf').sync;
 
 describe('Util:', () => {
   describe('parseImport', () => {
     it('simple import', assert => {
-      let importArray = parseImport(`import a from './my-module';`);
-      assert.deepEqual(importArray, [`import a from './my-module';`]);
+      let importsArray = parseImport(`import a from './my-module';`);
+      assert.deepEqual(importsArray, [`import a from './my-module';`]);
     });
     it('deep destructured import', assert => {
-      let importArray = parseImport(`import foo, { bar: { a } } from 'my-module';`);
-      assert.deepEqual(importArray, [`import foo, { bar: { a } } from 'my-module';`]);
+      let importsArray = parseImport(`import foo, { bar: { a } } from 'my-module';`);
+      assert.deepEqual(importsArray, [`import foo, { bar: { a } } from 'my-module';`]);
     });
     it('skips import used as a non keyword', assert => {
       let result = parseImport(`//lets import some libraries`);
@@ -102,11 +102,11 @@ describe('Util:', () => {
   describe('getCode', () => {
     it('simple code', assert => {
       let code = getCode([`foo(a) // equals: 1;`],[`import foo from './foo';`]);
-      assert.equal(code, `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n    assert.expect(1);\n  });\n});`);
+      assert.equal(code, `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n    ;\n    assert.expect(1);\n  });\n});`);
     });
     it('empty Readme case', assert => {
       let code = getCode([],[]);
-      assert.equal(code, `\"use strict\";\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.expect(0);\n  });\n});`);
+      assert.equal(code, `\"use strict\";\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    ;\n    assert.expect(0);\n  });\n});`);
     });
   });
   describe('checkDupAndAddToList', () => {
@@ -117,4 +117,28 @@ describe('Util:', () => {
       assert.deepEqual(checkDupAndAddToList([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6]);
     });
   });
+  describe('parseCode', () => {
+    it('Returns imports', assert => {
+      let { tempCodeLines, tempImportArray } = parseCode(`import foo, { bar: { a } } from 'my-module';`);
+      assert.deepEqual(tempImportArray, [`import foo, { bar: { a } } from 'my-module';`]);
+      assert.deepEqual(tempCodeLines, []);
+    });
+    it('Returns simple codelines', assert => {
+      let { tempCodeLines, tempImportArray } = parseCode(`add(a,b);`);
+      assert.deepEqual(tempImportArray, []);
+      assert.deepEqual(tempCodeLines, [`add(a,b);`]);
+    });
+    it('Returns multiline codelines', assert => {
+      debugger
+      let { tempCodeLines, tempImportArray } = parseCode(`add( { \na: 4\n }.a, b);`);
+      assert.deepEqual(tempImportArray, []);
+      assert.deepEqual(tempCodeLines, [`add( { a: 4 }.a, b);`]);
+    });
+    it('Returns multiline imports', assert => {
+      let { tempCodeLines, tempImportArray } = parseCode(`import {\nsubtract\n} from './add';`);
+      assert.deepEqual(tempImportArray, [`import {\nsubtract\n} from './add';`]);
+      assert.deepEqual(tempCodeLines, []);
+    });
+  });
+
 });
