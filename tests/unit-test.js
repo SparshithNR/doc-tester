@@ -129,7 +129,6 @@ describe('Util:', () => {
       assert.deepEqual(tempCodeLines, [`add(a,b);`]);
     });
     it('Returns multiline codelines', assert => {
-      debugger
       let { tempCodeLines, tempImportArray } = parseCode(`add( { \na: 4\n }.a, b);`);
       assert.deepEqual(tempImportArray, []);
       assert.deepEqual(tempCodeLines, [`add( { a: 4 }.a, b);`]);
