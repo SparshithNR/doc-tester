@@ -6,11 +6,11 @@ const markDownTest = require('../index');
 program
   .version(pkg.version)
   .option('-f, --file [pathToFile]','File needs to be tested', 'README.md')
-  .option('-d, --debug [true | false]','Retain test file after execution', 'false')
+  .option('-d, --debug [true | false]','Retain test file after execution')
   .action(async (command) => {
     let { file, debug } = command;
     try {
-      await markDownTest(file, debug == 'true' ? true : false);
+      await markDownTest(file, /true|1/.test(debug));
     } catch (err) {
       console.log(`Not all tests passed: \n${err}`);
       process.exit(1);
