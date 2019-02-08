@@ -102,11 +102,21 @@ describe('Util:', () => {
   describe('getCode', () => {
     it('simple code', assert => {
       let code = getCode([`foo(a) // equals: 1;`],[`import foo from './foo';`]);
-      assert.equal(code, `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n    ;\n    assert.expect(1);\n  });\n});`);
+      assert.equal(code, `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n    assert.expect(1);\n  });\n});`);
     });
     it('empty Readme case', assert => {
       let code = getCode([],[]);
-      assert.equal(code, `\"use strict\";\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    ;\n    assert.expect(0);\n  });\n});`);
+      assert.equal(code, `\"use strict\";\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.expect(0);\n  });\n});`);
+    });
+    it('ends with non assertion code', assert => {
+      debugger;
+      let code = getCode([`foo(a) // equals: 1;`, `console.log('a')`],[`import foo from './foo';`]);
+      assert.equal(code, `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n    console.log('a');\n    assert.expect(1);\n  });\n});`);
+    });
+    it('contains non assertion code in center', assert => {
+      debugger;
+      let code = getCode([`foo(a) // equals: 1;`, `console.log('a')`, `foo(b) // equals: 3;`],[`import foo from './foo';`]);
+      assert.equal(code, `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('Test the doc', function () {\n  it('samples', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n    console.log('a');\n    assert.equal((0, _foo.default)(b), 3);\n    assert.expect(2);\n  });\n});`);
     });
   });
   describe('checkDupAndAddToList', () => {
