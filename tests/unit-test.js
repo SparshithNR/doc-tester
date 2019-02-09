@@ -1,7 +1,7 @@
 const describe = QUnit.module;
 const it = QUnit.test;
 const done = QUnit.testDone;
-const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList, parseCode, checkIfJS } = require('../lib/util');
+const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList, parseCode, checkIfJS, gaurdSingleQuote } = require('../lib/util');
 const fixture = require('fixturify');
 const rm = require('rimraf').sync;
 
@@ -170,6 +170,14 @@ describe('Util:', () => {
       assert.notOk(checkIfJS('sh'), 'sh');
       assert.notOk(checkIfJS('JAVA'), 'JAVA');
       assert.notOk(checkIfJS('python'), 'python');
+    });
+  });
+  describe('gaurdSingleQuote', () =>{
+    it('gaurds string', assert => {
+      assert.equal(gaurdSingleQuote("String's problems"), `String\\'s problems`);
+    });
+    it('Nothing to gaurd', assert => {
+      assert.equal(gaurdSingleQuote("String problems"), `String problems`);
     });
   });
 });
