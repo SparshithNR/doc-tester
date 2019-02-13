@@ -4,6 +4,7 @@ const done = QUnit.testDone;
 const { parseFile, parseImport, getAssertionComponents, getCode, getAssertion, checkDupAndAddToList, parseCode, checkIfJS, gaurdSingleQuote } = require('../lib/util');
 const fixture = require('fixturify');
 const rm = require('rimraf').sync;
+const { runTest } = require('../index');
 
 describe('Util:', () => {
   describe('parseImport', () => {
@@ -180,4 +181,25 @@ describe('Util:', () => {
       assert.equal(gaurdSingleQuote("String problems"), `String problems`);
     });
   });
+});
+
+describe('Index', async () => {
+  fixture.writeSync('tests', {
+    'add.js':`exports.add = (a, b) => {
+      return a + b;
+    }`
+  });
+  describe('runTest', () => {
+    it('test passes', async (assert) => {
+      let done = assert.async();
+      assert.ok(await runTest({ codeArray: ['add(3,4) // equals: 7;'], importsArray: ['import { add } from \'./tests/add\''] }));
+      done();
+    });
+    it('test fails with error', async (assert) => {
+      assert.rejects(runTest({ codeArray: ['add(3,4) // equals: 8;'], importsArray: ['import { add } from \'./tests/add\''] }), function (error) {
+        rm('tests/add.js');
+        return error == `Test exited with code 1`;
+      }, 'threw error');
+    });
+  })
 });

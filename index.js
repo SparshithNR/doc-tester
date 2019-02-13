@@ -3,13 +3,18 @@ const fs = require('fs');
 const rm = require('rimraf').sync;
 
 module.exports = async (fileName, debug, inspect) => {
-  const { codeArray, importsArray } = parseFile(fileName);
+  await runTest(parseFile(fileName), fileName, debug, inspect);
+}
+
+async function runTest({ codeArray, importsArray }, fileName='test', debug=false, inspect=false) {
   try {
     fs.writeFileSync('test.js', getCode(codeArray, importsArray, fileName));
-    await executeTests(inspect);
+    return await executeTests(inspect);
   } finally {
     if(!debug) {
       rm('test.js');
     }
   }
 }
+
+module.exports.runTest = runTest;
