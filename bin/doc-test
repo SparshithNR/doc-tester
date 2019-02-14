@@ -7,12 +7,14 @@ program
   .version(pkg.version)
   .option('-f, --file [pathToFile]','File needs to be tested', 'README.md')
   .option('-d, --debug [true | false]','Retain test file after execution')
-  .action(async (command) => {
-    let { file, debug } = command;
+  .option('--inspect|--inspect-brk [true | portNumber]','Debug the test file.')
+  .action(async () => {
+    let { file, debug, inspectBrk } = program;
+    let inspect =/true|1|\d/.test(inspectBrk) ? inspectBrk : false;
     try {
-      await markDownTest(file, /true|1/.test(debug));
+      await markDownTest(file, /true|1/.test(debug), inspect);
     } catch (err) {
-      console.log(`Not all tests passed: \n${err}`);
+      console.log(`Not all tests passed: ${err}`);
       process.exit(1);
     }
   });
