@@ -2,17 +2,18 @@ const { getCode, executeTests, parseFile } = require('./lib/util');
 const fs = require('fs');
 const rm = require('rimraf').sync;
 
-module.exports = async (fileName, debug, inspect) => {
-  await runTest(parseFile(fileName), fileName, debug, inspect);
+module.exports = async (file, debug, inspect, output) => {
+  await runTest(parseFile(file), { testName: file, debug, inspect, testFile: output });
 }
 
-async function runTest({ codeArray, importsArray }, fileName='test', debug=false, inspect=false) {
+async function runTest({ codeArray, importsArray }, options) {
+  let { testName = 'Doc Test' , debug = false, inspect = false, testFile = `test.js` } = options || {};
   try {
-    fs.writeFileSync('test.js', getCode(codeArray, importsArray, fileName));
-    return await executeTests(inspect);
+    fs.writeFileSync(testFile, getCode(codeArray, importsArray, testName));
+    return await executeTests(inspect, testFile);
   } finally {
     if(!debug) {
-      rm('test.js');
+      rm(testFile);
     }
   }
 }

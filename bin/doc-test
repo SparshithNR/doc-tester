@@ -5,14 +5,15 @@ const pkg = require('../package.json');
 const markDownTest = require('../index');
 program
   .version(pkg.version)
-  .option('-f, --file [pathToFile]','File needs to be tested', 'README.md')
-  .option('-d, --debug [true | false]','Retain test file after execution')
-  .option('--inspect|--inspect-brk [true | portNumber]','Debug the test file.')
+  .option('-f, --file [pathToFile]', 'File needs to be tested', 'README.md')
+  .option('-d, --debug [true | false]', 'Retain test file after execution')
+  .option('--inspect|--inspect-brk [true | portNumber]', 'Debug the test file.')
+  .option('-o, --output [path/name]', 'Path/name of output file', 'test.js')
   .action(async () => {
-    let { file, debug, inspectBrk } = program;
+    let { file, debug, inspectBrk, output } = program;
     let inspect =/true|1|\d/.test(inspectBrk) ? inspectBrk : false;
     try {
-      await markDownTest(file, /true|1/.test(debug), inspect);
+      await markDownTest(file, /true|1/.test(debug), inspect, output);
     } catch (err) {
       console.log(`Not all tests passed: ${err}`);
       process.exit(1);
