@@ -63,6 +63,14 @@ describe('Util:', () => {
       let assertionObject = getAssertionComponents(`foo(a) // test comment;`);
       assert.equal(assertionObject, null);
     });
+    it(`parses code without ; at the end`, assert => {
+      let assertionObject = getAssertionComponents(`1+1//equals:2`);
+      assert.deepEqual(assertionObject, { code: '1+1', assertion: 'equals', expected: '2' });
+    });
+    it(`parses code with ; and extra comments at the end`, assert => {
+      let assertionObject = getAssertionComponents(`1+1 // equals: 2; SOME COMMENT`);
+      assert.deepEqual(assertionObject, { code: '1+1', assertion: 'equals', expected: '2' });
+    });
   });
   describe('parseFile', () => {
     fixture.writeSync('fixture', {
@@ -143,7 +151,12 @@ describe('Util:', () => {
     it('Returns multiline codelines', assert => {
       let { tempCodeLines, tempImportArray } = parseCode(`add( { \na: 4\n }.a, b);`);
       assert.deepEqual(tempImportArray, []);
-      assert.deepEqual(tempCodeLines, [`add( { a: 4 }.a, b);`]);
+      assert.deepEqual(tempCodeLines, [`add( {a: 4}.a, b);`]);
+    });
+    it('Returns multiline codelines with array', assert => {
+      let { tempCodeLines, tempImportArray } = parseCode(`add( { \na: [4,\n 5]\n }.a[1], b);`);
+      assert.deepEqual(tempImportArray, []);
+      assert.deepEqual(tempCodeLines, [`add( {a: [4,5]}.a[1], b);`]);
     });
     it('Returns multiline imports', assert => {
       let { tempCodeLines, tempImportArray } = parseCode(`import {\nsubtract\n} from './add';`);
