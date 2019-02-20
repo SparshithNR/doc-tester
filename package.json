@@ -17,6 +17,7 @@
     "commander": "^2.19.0",
     "execa": "^1.0.0",
     "fixturify": "^0.3.4",
+    "fs-extra": "^7.0.1",
     "is-balanced": "^1.0.2",
     "qunit": "^2.9.1",
     "remark-parse": "^6.0.3",
