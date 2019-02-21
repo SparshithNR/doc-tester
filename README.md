@@ -4,7 +4,11 @@ This library is used to run code samples in markdown documents as acceptance tes
 
 ## Installation
 ```sh
-npm install sparshithNR/doc-tester#master --save-dev
+npm install doc-tester
+```
+If you are using yarn
+```sh
+yarn add doc-tester
 ```
 ## Usage
 ### From commandline

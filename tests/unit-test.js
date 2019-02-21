@@ -191,9 +191,7 @@ describe('Index', async () => {
   });
   describe('runTest', () => {
     it('test passes', async (assert) => {
-      let done = assert.async();
       assert.ok(await runTest({ codeArray: ['add(3,4) // equals: 7;'], importsArray: ['import { add } from \'./tests/add\''] }));
-      done();
     });
     it('test fails with error', async (assert) => {
       assert.rejects(runTest({ codeArray: ['add(3,4) // equals: 8;'], importsArray: ['import { add } from \'./tests/add\''] }), function (error) {
