@@ -5,8 +5,21 @@
   "main": "index.js",
   "license": "MIT",
   "private": false,
+  "author": "SparshithNR",
+  "keywords": [
+    "doctest",
+    "test"
+  ],
+  "bugs": {
+    "url": "https://github.com/SparshithNR/doc-tester/issues"
+  },
+  "homepage": "https://github.com/SparshithNR/doc-tester#readme",
   "bin": {
     "doc-test": "./bin/doc-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SparshithNR/doc-tester.git"
   },
   "scripts": {
     "test": "qunit tests/*test.js"
@@ -17,11 +30,17 @@
     "commander": "^2.19.0",
     "execa": "^1.0.0",
     "fixturify": "^0.3.4",
+    "fs-extra": "^7.0.1",
     "is-balanced": "^1.0.2",
     "qunit": "^2.9.1",
     "remark-parse": "^6.0.3",
     "rimraf": "^2.6.3",
     "unified": "^7.1.0",
     "unified-stream": "^1.0.4"
-  }
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "devDependencies": {}
 }
