@@ -26,6 +26,10 @@ describe('Util:', () => {
       let assertionCode = getAssertion({ code: 'foo(a)', assertion: 'equals', expected: 'a'});
       assert.equal(assertionCode, `it('foo(a)', assert => { assert.equal(foo(a), a); });\n`);
     });
+    it('equals with await', assert => {
+      let assertionCode = getAssertion({ code: 'await foo(a)', assertion: 'equals', expected: 'a'});
+      assert.equal(assertionCode, `it('await foo(a)', async (assert) => { assert.equal(await foo(a), a); });\n`);
+    });
     it('not-equals', assert => {
       let assertionCode = getAssertion({ code: 'foo(a)', assertion: 'not-equals', expected: 'a'});
       assert.equal(assertionCode, `it('foo(a)', assert => { assert.notEqual(foo(a), a); });\n`);
@@ -115,19 +119,19 @@ describe('Util:', () => {
   describe('getCode', () => {
     it('simple code', assert => {
       let code = getCode([`foo(a) // equals: 1;`],[`import foo from './foo';`], 'README.md');
-      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('README.md', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });\n});`.replace(/\s/g, ''));
+      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;varregeneratorRuntime=require('regenerator-runtime');\ndescribe('README.md', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });\n});`.replace(/\s/g, ''));
     });
     it('empty Readme case', assert => {
       let code = getCode([],[], 'README.md');
-      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('README.md', function () {});`.replace(/\s/g, ''));
+      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar describe = QUnit.module;\nvar it = QUnit.test;varregeneratorRuntime=require('regenerator-runtime');\ndescribe('README.md', function () {});`.replace(/\s/g, ''));
     });
     it('ends with non assertion code', assert => {
       let code = getCode([`foo(a) // equals: 1;`, `console.log('a')`],[`import foo from './foo';`], 'README.md');
-      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('README.md', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });  console.log('a');\n});`.replace(/\s/g, ''));
+      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;varregeneratorRuntime=require('regenerator-runtime');\ndescribe('README.md', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });  console.log('a');\n});`.replace(/\s/g, ''));
     });
     it('contains non assertion code in center', assert => {
       let code = getCode([`foo(a) // equals: 1;`, `console.log('a')`, `foo(b) // equals: 3;`],[`import foo from './foo';`], 'README.md');
-      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;\ndescribe('README.md', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });  console.log('a');\n  it('foo(b)', function (assert) {\n  assert.equal((0, _foo.default)(b), 3);\n });\n});`.replace(/\s/g, ''));
+      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;varregeneratorRuntime=require('regenerator-runtime');\ndescribe('README.md', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });  console.log('a');\n  it('foo(b)', function (assert) {\n  assert.equal((0, _foo.default)(b), 3);\n });\n});`.replace(/\s/g, ''));
     });
   });
   describe('checkDupAndAddToList', () => {
