@@ -34,6 +34,18 @@ describe('Util:', () => {
       let assertionCode = getAssertion({ code: 'foo(a)', assertion: 'not-equals', expected: 'a'});
       assert.equal(assertionCode, `it('foo(a)', assert => { assert.notEqual(foo(a), a); });\n`);
     });
+    it('not-equals with await', assert => {
+      let assertionCode = getAssertion({ code: 'await foo(a)', assertion: 'not-equals', expected: 'a'});
+      assert.equal(assertionCode, `it('await foo(a)', async (assert) => { assert.notEqual(await foo(a), a); });\n`);
+    });
+    it('deep-equal', assert => {
+      let assertionCode = getAssertion({ code: 'foo(a)', assertion: 'deep-equal', expected: 'a'});
+      assert.equal(assertionCode, `it('foo(a)', assert => { assert.deepEqual(foo(a), a); });\n`);
+    });
+    it('deep-equal with await', assert => {
+      let assertionCode = getAssertion({ code: 'await foo(a)', assertion: 'deep-equal', expected: 'a'});
+      assert.equal(assertionCode, `it('await foo(a)', async (assert) => { assert.deepEqual(await foo(a), a); });\n`);
+    });
     it('throws', assert => {
       let assertionCode = getAssertion({ code: 'foo(a)', assertion: 'throws'});
       assert.equal(assertionCode, `it('foo(a)', assert => { assert.throws(() => { throw foo(a) }, 'Throws error'); });\n`);
