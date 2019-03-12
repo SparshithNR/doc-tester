@@ -30,7 +30,7 @@ import { runTest } from 'doc-tester';
 await runTest({
   codeArray: ['add(3,4) // equals: 7;'],
   importsArray: [`import { add } from './add'`]
-} /* , options */);
+} /* , options */) // equals: true;
 ```
 ### Options
 1. testName

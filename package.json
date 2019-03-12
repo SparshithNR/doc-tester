@@ -1,6 +1,6 @@
 {
   "name": "doc-tester",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Tests file to keep sample code always work",
   "main": "index.js",
   "license": "MIT",
@@ -22,7 +22,10 @@
     "url": "git+https://github.com/SparshithNR/doc-tester.git"
   },
   "scripts": {
-    "test": "qunit tests/*test.js"
+    "test": "yarn test-qunit && yarn test-doc",
+    "test-qunit": "qunit tests/*test.js",
+    "test-doc": "yarn link-to-node-module && bin/doc-test",
+    "link-to-node-module": "node test-setup.js"
   },
   "dependencies": {
     "@babel/core": "^7.2.2",
@@ -33,6 +36,7 @@
     "fs-extra": "^7.0.1",
     "is-balanced": "^1.0.2",
     "qunit": "^2.9.1",
+    "regenerator-runtime": "^0.13.1",
     "remark-parse": "^6.0.3",
     "rimraf": "^2.6.3",
     "unified": "^7.1.0",
