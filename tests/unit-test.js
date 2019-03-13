@@ -135,7 +135,7 @@ describe('Util:', () => {
     });
     it('empty Readme case', assert => {
       let code = getCode([],[], 'README.md');
-      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar describe = QUnit.module;\nvar it = QUnit.test;varregeneratorRuntime=require('regenerator-runtime');\ndescribe('README.md', function () {});`.replace(/\s/g, ''));
+      assert.equal(code, false);
     });
     it('ends with non assertion code', assert => {
       let code = getCode([`foo(a) // equals: 1;`, `console.log('a')`],[`import foo from './foo';`], 'README.md');
@@ -144,6 +144,10 @@ describe('Util:', () => {
     it('contains non assertion code in center', assert => {
       let code = getCode([`foo(a) // equals: 1;`, `console.log('a')`, `foo(b) // equals: 3;`],[`import foo from './foo';`], 'README.md');
       assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;varregeneratorRuntime=require('regenerator-runtime');\ndescribe('README.md', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });  console.log('a');\n  it('foo(b)', function (assert) {\n  assert.equal((0, _foo.default)(b), 3);\n });\n});`.replace(/\s/g, ''));
+    });
+    it('No fileName', assert => {
+      let code = getCode([`foo(a) // equals: 1;`],[`import foo from './foo';`]);
+      assert.equal(code.replace(/\s/g, ''), `\"use strict\";\n\nvar _foo = _interopRequireDefault(require(\"./foo\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar describe = QUnit.module;\nvar it = QUnit.test;varregeneratorRuntime=require('regenerator-runtime');\ndescribe('Doc Test', function () {\n  it('foo(a)', function (assert) {\n    assert.equal((0, _foo.default)(a), 1);\n  });\n});`.replace(/\s/g, ''));
     });
   });
   describe('checkDupAndAddToList', () => {
@@ -227,6 +231,9 @@ describe('Index', async () => {
         rm('tests/add.js');
         return error == `Test exited with code 1`;
       }, 'threw error');
+    });
+    it('test passes no code array', async (assert) => {
+      assert.ok(await runTest({ codeArray: [], importsArray: [] }));
     });
   })
 });
