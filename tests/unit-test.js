@@ -64,6 +64,10 @@ describe('Util:', () => {
       let assertionObject = getAssertionComponents(`foo(a) // equals: a;`);
       assert.deepEqual(assertionObject, { code: 'foo(a)', assertion: 'equals', expected: 'a'});
     });
+    it('simple parsing with semicolon in statement', assert => {
+      let assertionObject = getAssertionComponents(`foo(a); // equals: a;`);
+      assert.deepEqual(assertionObject, { code: 'foo(a)', assertion: 'equals', expected: 'a'});
+    });
     it('additional comments', assert => {
       let assertionObject = getAssertionComponents(`foo(a) // equals: a;sample comment`);
       assert.deepEqual(assertionObject, { code: 'foo(a)', assertion: 'equals', expected: 'a'});

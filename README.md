@@ -2,6 +2,16 @@
 
 This library is used to run code samples in markdown documents as acceptance tests, using simple comment-based assertions. By testing code snippets in documentation, you can have greater confidence that code in your documentation works as advertised.
 
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Usage](#usage)
+    * [From Commandline](#from-commandline)
+    * [From Code](#from-code)
+3. [How to use import](#how-to-use-import)
+4. [Assertions in Doc](#assertions-in-doc)
+
+
 ## Installation
 ```sh
 npm install doc-tester
@@ -38,3 +48,41 @@ await runTest({
 2. [cleanup](#2--c---cleanup)
 3. [inspect](#3---inspect---inspect-brk)
 4. [output](#4--o---output)
+
+## How to use import
+
+In order to have the `import` to work, you need to have the module in `node_module/` folder or provide the relative path to file from where to import. You can `symlink` the current directory to `node_modules/` or have a build step which put final build to `node_modules` as well.
+
+You can use the code below get the test working.
+```js
+const fs = require('fs-extra');
+try {
+  fs.symlinkSync(__dirname, `./node_modules/doc-tester`);
+} catch(err) {
+  if (err.code == 'EEXIST') {
+    console.log('doc-tester already symlinked to node_modules');
+  } else {
+    throw err;
+  }
+}
+```
+
+Check the [package.json](https://github.com/SparshithNR/doc-tester/blob/master/package.json#L28) of this project how I do it.
+
+## Assertions in Doc.
+The doc-tester expects code block to be marked with language, ex: `js`, `ts` etc. It decides whether to generate tests for the given code block or not based on this.
+This library also expects to follow the below syntax in the doc.
+
+> `statement // assertionType: expectedResult`
+
+Assertion types `equals`, `not-equals`, `throws` and `deep-equals` are supported as of now.
+
+```js
+4; // equals: 4
+4+2 // not-equals: 4
+new Error('3'); // throws
+{ a : 5, b: 6}; // deep-equal: { a : 5, b: 6 }
+```
+
+The statement should be a non-assignment statement.
+> ex: `a=3; //equals: 3` can not be tested.
