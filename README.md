@@ -1,6 +1,7 @@
 # DocTester
 
 This library is used to run code samples in markdown documents as acceptance tests, using simple comment-based assertions. By testing code snippets in documentation, you can have greater confidence that code in your documentation works as advertised.
+doc-tester expects code snippets in the markdown to follow a certain assertion language. Please rewrite markdown file to adhere to doc-tester's [format](#assertions-in-doc).
 
 ## Table of Contents
 
@@ -23,7 +24,7 @@ yarn add doc-tester
 ## Usage
 ### From commandline
 ```sh
-node_modules/.bin/doc-tester
+doc-tester
 ```
 ### options
 #### 1. -f (--file)
@@ -53,7 +54,7 @@ await runTest({
 
 In order to have the `import` to work, you need to have the module in `node_module/` folder or provide the relative path to file from where to import. You can `symlink` the current directory to `node_modules/` or have a build step which put final build to `node_modules` as well.
 
-You can use the code below get the test working.
+You can use the code below sample code get the test working, replace `doc-tester` with your module name.
 ```js
 const fs = require('fs-extra');
 try {
@@ -78,11 +79,14 @@ This library also expects to follow the below syntax in the doc.
 Assertion types `equals`, `not-equals`, `throws` and `deep-equals` are supported as of now.
 
 ```js
-4; // equals: 4
-4+2 // not-equals: 4
+// Let's assume README has snippet Math.sqrt(4) // 2
+// statement is Math.sqrt(4), expected value is 2 and assertionType is equals. We rewrite it to,
+Math.sqrt(4); // equals: 2
+
+Math.sqrt(4) // not-equals: 4
 new Error('3'); // throws
 { a : 5, b: 6}; // deep-equal: { a : 5, b: 6 }
 ```
 
-The statement should be a non-assignment statement.
+**Note**: The statement should be a non-assignment statement.
 > ex: `a=3; //equals: 3` can not be tested.
