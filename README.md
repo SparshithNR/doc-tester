@@ -52,7 +52,11 @@ await runTest({
 
 ## How to use import
 
-In order to have the `import` to work, you need to have the module in `node_module/` folder or provide the relative path to file from where to import. You can `symlink` the current directory to `node_modules/` or have a build step which put final build to `node_modules` as well.
+In order for absolute `import`s to work, make sure what you're importing is present in your project's `node_modules/` folder.
+
+Relative imports are generally a bad idea in documentation examples -- create examples as your users would need to think about them -- consuming a library as a dependency, using absolute imports.
+
+Please keep in mind that some import-related issues can be solved by symlinking a project's root directory (or build output) into its own `node_modules/` folder, effectively simulating what your users might see in their own `node_modules` when depending on your library.
 
 You can use the code below sample code get the test working, replace `doc-tester` with your module name.
 ```js
