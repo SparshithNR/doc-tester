@@ -1,6 +1,17 @@
 # DocTester
 
 This library is used to run code samples in markdown documents as acceptance tests, using simple comment-based assertions. By testing code snippets in documentation, you can have greater confidence that code in your documentation works as advertised.
+doc-tester expects code snippets in the markdown to follow a certain assertion language. Please rewrite markdown file to adhere to doc-tester's [format](#assertions-in-doc).
+
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Usage](#usage)
+    * [From Commandline](#from-commandline)
+    * [From Code](#from-code)
+3. [How to use import](#how-to-use-import)
+4. [Assertions in Doc](#assertions-in-doc)
+
 
 ## Installation
 ```sh
@@ -13,7 +24,7 @@ yarn add doc-tester
 ## Usage
 ### From commandline
 ```sh
-node_modules/.bin/doc-tester
+doc-tester
 ```
 ### options
 #### 1. -f (--file)
@@ -38,3 +49,48 @@ await runTest({
 2. [cleanup](#2--c---cleanup)
 3. [inspect](#3---inspect---inspect-brk)
 4. [output](#4--o---output)
+
+## How to use import
+
+In order for absolute `import`s to work, make sure what you're importing is present in your project's `node_modules/` folder.
+
+Relative imports are generally a bad idea in documentation examples -- create examples as your users would need to think about them -- consuming a library as a dependency, using absolute imports.
+
+Please keep in mind that some import-related issues can be solved by symlinking a project's root directory (or build output) into its own `node_modules/` folder, effectively simulating what your users might see in their own `node_modules` when depending on your library.
+
+You can use the code below sample code get the test working, replace `doc-tester` with your module name.
+```js
+const fs = require('fs-extra');
+try {
+  fs.symlinkSync(__dirname, `./node_modules/doc-tester`);
+} catch(err) {
+  if (err.code == 'EEXIST') {
+    console.log('doc-tester already symlinked to node_modules');
+  } else {
+    throw err;
+  }
+}
+```
+
+Check the [package.json](https://github.com/SparshithNR/doc-tester/blob/master/package.json#L28) of this project how I do it.
+
+## Assertions in Doc.
+The doc-tester expects code block to be marked with language, ex: `js`, `ts` etc. It decides whether to generate tests for the given code block or not based on this.
+This library also expects to follow the below syntax in the doc.
+
+> `statement // assertionType: expectedResult`
+
+Assertion types `equals`, `not-equals`, `throws` and `deep-equals` are supported as of now.
+
+```js
+// Let's assume README has snippet Math.sqrt(4) // 2
+// statement is Math.sqrt(4), expected value is 2 and assertionType is equals. We rewrite it to,
+Math.sqrt(4); // equals: 2
+
+Math.sqrt(4) // not-equals: 4
+new Error('3'); // throws
+{ a : 5, b: 6}; // deep-equal: { a : 5, b: 6 }
+```
+
+**Note**: The statement should be a non-assignment statement.
+> ex: `a=3; //equals: 3` can not be tested.
